@@ -11,7 +11,7 @@
     <div id="chartContainer" style="width:500px;height:500px;"></div>
 
     <script>
-    Plotly.d3.csv('mt_bruno_elevation1.csv', function(err, rows) {
+    Plotly.d3.csv('data-test.csv', function(err, rows) {
         function unpack(rows, key) {
             return rows.map(function(row) { return row[key]; });
         }
