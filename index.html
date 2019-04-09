@@ -1,46 +1,9 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-    <title>Learn Plotly</title>
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <title>Learn 3D Charts js</title>
 </head>
-
 <body>
-    Learn Plotly
-    <div id="chartContainer" style="width:500px;height:500px;"></div>
-
-    <script>
-    Plotly.d3.csv('data-test.csv', function(err, rows) {
-        function unpack(rows, key) {
-            return rows.map(function(row) { return row[key]; });
-        }
-
-        var z_data = []
-        for (i = 0; i < 24; i++) {
-            z_data.push(unpack(rows, i));
-        }
-
-        var data = [{
-            z: z_data,
-            type: 'surface'
-        }];
-
-        var layout = {
-            title: 'Mt Bruno Elevation',
-            autosize: false,
-            width: 500,
-            height: 500,
-            margin: {
-                l: 65,
-                r: 50,
-                b: 65,
-                t: 90,
-            }
-        };
-        Plotly.newPlot('chartContainer', data, layout);
-    });
-    </script>
+  <a href="plotly.html">Plotly</a>
 </body>
-
 </html>
