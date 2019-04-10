@@ -45,11 +45,11 @@
     var scene = new THREE.Scene();
     var material = new THREE.LineBasicMaterial({ color: 0x00ff00 });
 
-    for (var i = 0; i <= 90; i += 1) { // theta
+    for (var i = 0; i <= 10; i += 1) { // theta
       var geometry = new THREE.Geometry();
 
-      for (var j = 0; j <= 90; j += 1) { // phi
-        var pointSpherical = new THREE.Spherical(30, j, i);
+      for (var j = 0; j <= 10; j += 1) { // phi
+        var pointSpherical = new THREE.Spherical(30, i, j);
         var pointCartesian = new THREE.Vector3();
         pointCartesian.setFromSpherical(pointSpherical);
         geometry.vertices.push(pointCartesian);
