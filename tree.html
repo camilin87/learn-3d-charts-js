@@ -37,12 +37,22 @@
     camera.lookAt(0, 0, 0);
 
     var scene = new THREE.Scene();
-    var material = new THREE.LineBasicMaterial({ color: 0x0000ff });
+    var material = new THREE.LineBasicMaterial({ color: 0x00ff00 });
+
+    var sphereContour = [];
+
+    for (var i = 0; i <= 180; i += 5) { // theta
+      for (var j = 0; j <= 360; j += 5) { // phi
+        sphereContour.push(new THREE.Spherical(30, j, i));
+      }
+    }
 
     var geometry = new THREE.Geometry();
-    geometry.vertices.push(new THREE.Vector3(-10, 0, 0));
-    geometry.vertices.push(new THREE.Vector3(0, 10, 0));
-    geometry.vertices.push(new THREE.Vector3(10, 0, 0));
+    sphereContour.forEach(p => {
+      var v = new THREE.Vector3()
+      v.setFromSpherical(p)
+      geometry.vertices.push(v);
+    });
 
     scene.add(new THREE.Line(geometry, material));
 
