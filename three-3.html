@@ -34,13 +34,13 @@
       return x * Math.PI / 180.0;
     }
 
-    var colorData = [
-      { 0, 0, 0xff0000 }, // this should be the leftmost point at the center
-      { 0, 90, 0x00FF00 }, // this should be the topmost point at the center
-      { 0, -90, 0xFFFF00 }, // this should be the bottommost point at the center
-      { 90, 0, 0xffffff }, // this should to one side
-      { -90, 0, 0x333333 }, // this should be to the other
-    ];
+    var colorData = {
+      '0;0': 0xff0000, // this should be the leftmost point at the center
+      '0;90': 0x00FF00, // this should be the topmost point at the center
+      '0;-90': 0xFFFF00, // this should be the bottommost point at the center
+      '90;0': 0xffffff, // this should to one side
+      '-90;0': 0x333333, // this should be to the other
+    };
 
     var renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
