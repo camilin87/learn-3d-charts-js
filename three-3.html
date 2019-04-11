@@ -48,44 +48,49 @@
     var scene = new THREE.Scene();
     var group = new THREE.Group();
 
-    var increment = 5;
+    var sphereSize = 30;
+    var degreesPrecision = 5;
+    var figureIndex = 0;
 
-    //something weird is happening, because I can't get to draw a portion of it
-    for (var i = 0; i < 5; i += increment) {
-      var sphereIndex = 0;
-      sphereIndex++;
-
-      for (var j = 85; j < 90; j += increment) {
-        sphereIndex++;
+    for (var i = 0; i < 180; i += degreesPrecision) { //vertical
+      for (var j = 180; j < 360; j += degreesPrecision) { //horizontal
+        figureIndex++;
 
         var phiStart = degToRad(i);
-        var phiEnd = degToRad(i + increment);
+        var phiEnd = degToRad(i + degreesPrecision);
         var thetaStart = degToRad(j);
-        var thetaEnd = degToRad(j + increment);
+        var thetaEnd = degToRad(j + degreesPrecision);
 
-        //TODO draw a square
+        var color = (figureIndex % 2 == 0) ? 0x156289 : 0xFFFF50;
+        var material = new THREE.MeshBasicMaterial({ color: color, side: THREE.DoubleSide});
+
+        var vertices = [
+          new THREE.Vector3(),
+          new THREE.Vector3(),
+          new THREE.Vector3(),
+          new THREE.Vector3(),
+        ];
+
+        vertices[0].setFromSphericalCoords(sphereSize, phiStart, thetaStart);
+        vertices[1].setFromSphericalCoords(sphereSize, phiStart, thetaEnd);
+        vertices[2].setFromSphericalCoords(sphereSize, phiEnd, thetaStart);
+        vertices[3].setFromSphericalCoords(sphereSize, phiEnd, thetaEnd);
+
+        var triangle1 = new THREE.Geometry();
+        for (var z = 0; z < 3; z++) {
+          triangle1.vertices.push(vertices[z]);
+        }
+        triangle1.faces.push(new THREE.Face3(0, 1, 2));
+        group.add(new THREE.Mesh(triangle1, material));
+
+        var triangle2 = new THREE.Geometry();
+        for (var z = 1; z < 4; z++) {
+          triangle2.vertices.push(vertices[z]);
+        }
+        triangle2.faces.push(new THREE.Face3(0, 1, 2));
+        group.add(new THREE.Mesh(triangle2, material));
       }
     }
-
-    // var geometry = new THREE.PlaneGeometry(5, 20);
-    var material = new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} );
-    // var plane = new THREE.Mesh(geometry, material);
-    // group.add(plane);
-
-    var v1 = new THREE.Vector3();
-    v1.setFromSphericalCoords(30, degToRad(85), degToRad(40));
-    var v2 = new THREE.Vector3();
-    v2.setFromSphericalCoords(30, degToRad(90), degToRad(40));
-    var v3 = new THREE.Vector3();
-    v3.setFromSphericalCoords(30, degToRad(85), degToRad(45));
-
-    var geom = new THREE.Geometry();
-    geom.vertices.push(v1);
-    geom.vertices.push(v2);
-    geom.vertices.push(v3);
-    geom.faces.push(new THREE.Face3(0, 1, 2));
-    var object = new THREE.Mesh(geom, material);
-    group.add(object);
 
     scene.add(group);
 
