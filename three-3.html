@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>Learn TreeJs Multicolor Sphere</title>
+  <title>Learn TreeJs Multicolor Sphere Composed of squares</title>
   <style>
     body {
       margin: 0;
@@ -30,7 +30,7 @@
       return;
     }
 
-    function degToRad(x){
+    function degToRad(x) {
       return x * Math.PI / 180.0;
     }
 
@@ -51,33 +51,41 @@
     var increment = 5;
 
     //something weird is happening, because I can't get to draw a portion of it
-    for (var i = 0; i < 5; i += increment){
+    for (var i = 0; i < 5; i += increment) {
       var sphereIndex = 0;
       sphereIndex++;
 
-      for (var j = 85; j < 90; j += increment){
+      for (var j = 85; j < 90; j += increment) {
         sphereIndex++;
 
         var phiStart = degToRad(i);
         var phiEnd = degToRad(i + increment);
         var thetaStart = degToRad(j);
         var thetaEnd = degToRad(j + increment);
-        var geometry = new THREE.SphereGeometry(30, 10, 10, phiStart, phiEnd, thetaStart, thetaEnd);
 
-        var color = (sphereIndex % 2 == 0) ? 0x156289 : 0xFFFF50;
-        var emissive = (sphereIndex % 2 == 0) ? 0x072534 : 0x555505;
-
-        // var meshMaterial = new THREE.MeshBasicMaterial({ color: color, side: THREE.DoubleSide });
-        // group.add(new THREE.Mesh(geometry, meshMaterial));
-
-        var wireframe = new THREE.WireframeGeometry(geometry);
-        var line = new THREE.LineSegments(wireframe);
-        line.material.depthTest = false;
-        line.material.opacity = 0.25;
-        line.material.transparent = true;
-        group.add(line);
+        //TODO draw a square
       }
     }
+
+    // var geometry = new THREE.PlaneGeometry(5, 20);
+    var material = new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} );
+    // var plane = new THREE.Mesh(geometry, material);
+    // group.add(plane);
+
+    var v1 = new THREE.Vector3();
+    v1.setFromSphericalCoords(30, degToRad(85), degToRad(40));
+    var v2 = new THREE.Vector3();
+    v2.setFromSphericalCoords(30, degToRad(90), degToRad(40));
+    var v3 = new THREE.Vector3();
+    v3.setFromSphericalCoords(30, degToRad(85), degToRad(45));
+
+    var geom = new THREE.Geometry();
+    geom.vertices.push(v1);
+    geom.vertices.push(v2);
+    geom.vertices.push(v3);
+    geom.faces.push(new THREE.Face3(0, 1, 2));
+    var object = new THREE.Mesh(geom, material);
+    group.add(object);
 
     scene.add(group);
 
