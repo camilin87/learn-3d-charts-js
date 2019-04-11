@@ -72,9 +72,9 @@
     var colorData = {
       '0;0': 0xff0000, // this should be the leftmost point at the center
       '0;90': 0x00FF00, // this should be the topmost point at the center
-      '0;-90': 0xFFFF00, // this should be the bottommost point at the center
+      '0;-90': 0xffff00, // this should be the bottommost point at the center
       '90;0': 0xffffff, // this should to one side
-      '-90;0': 0x333333, // this should be to the other
+      '-90;0': 0x0000ff, // this should be to the other
     };
 
     var renderer = new THREE.WebGLRenderer();
@@ -93,16 +93,24 @@
 
     var degreesPrecision = 5;
     var figureIndex = 0;
+    var sphereSize = 30;
 
-    for (var i = 0; i < 180; i += degreesPrecision) { //vertical(azimut)
+    for (var i = 0; i < 180; i += degreesPrecision) { //vertical(azimut)(phi)
       figureIndex++;
-      for (var j = 180; j < 360; j += degreesPrecision) { //horizontal
+      for (var j = 180; j < 360; j += degreesPrecision) { //horizontal (theta)
         figureIndex++;
 
-        var color = (figureIndex % 2 == 0) ? 0x156289 : 0xFFFF50;
-        addSphericalSquareToGroup(group, color, 30, i, j, degreesPrecision);
+        var color = (figureIndex % 2 == 0) ? 0x555577 : 0x888888;
+        addSphericalSquareToGroup(group, color, sphereSize, i, j, degreesPrecision);
       }
     }
+
+    // draw anchors points
+    addSphericalSquareToGroup(group, 0xff0000, sphereSize * 1.1, 90, 270, 2); // this should be the leftmost point at the center
+    addSphericalSquareToGroup(group, 0x00FF00, sphereSize * 1.1, 0, 270, 15); // this should be the topmost point at the center
+    addSphericalSquareToGroup(group, 0xffff00, sphereSize * 1.1, 180, 270, 15); // this should be the bottommost point at the center
+    addSphericalSquareToGroup(group, 0xffffff, sphereSize * 1.1, 90, 180, 2); // this should to one side
+    addSphericalSquareToGroup(group, 0x0000ff, sphereSize * 1.1, 90, 0, 2); // this should be to the other
 
     scene.add(group);
 
