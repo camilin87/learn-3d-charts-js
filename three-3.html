@@ -34,6 +34,41 @@
       return x * Math.PI / 180.0;
     }
 
+    function addSphericalSquareToGroup(group, color, sphereSize, phi, theta, sizeInDegrees){
+      var phiStart = degToRad(phi);
+      var phiEnd = degToRad(phi + sizeInDegrees);
+      var thetaStart = degToRad(theta);
+      var thetaEnd = degToRad(theta + sizeInDegrees);
+
+      var vertices = [
+        new THREE.Vector3(),
+        new THREE.Vector3(),
+        new THREE.Vector3(),
+        new THREE.Vector3(),
+      ];
+
+      vertices[0].setFromSphericalCoords(sphereSize, phiStart, thetaStart);
+      vertices[1].setFromSphericalCoords(sphereSize, phiStart, thetaEnd);
+      vertices[2].setFromSphericalCoords(sphereSize, phiEnd, thetaStart);
+      vertices[3].setFromSphericalCoords(sphereSize, phiEnd, thetaEnd);
+
+      var triangle1 = new THREE.Geometry();
+      for (var z = 0; z < 3; z++) {
+        triangle1.vertices.push(vertices[z]);
+      }
+      triangle1.faces.push(new THREE.Face3(0, 1, 2));
+
+      var triangle2 = new THREE.Geometry();
+      for (var z = 1; z < 4; z++) {
+        triangle2.vertices.push(vertices[z]);
+      }
+      triangle2.faces.push(new THREE.Face3(0, 1, 2));
+
+      var material = new THREE.MeshBasicMaterial({ color: color, side: THREE.DoubleSide});
+      group.add(new THREE.Mesh(triangle1, material));
+      group.add(new THREE.Mesh(triangle2, material));
+    }
+
     var colorData = {
       '0;0': 0xff0000, // this should be the leftmost point at the center
       '0;90': 0x00FF00, // this should be the topmost point at the center
@@ -56,7 +91,6 @@
     var scene = new THREE.Scene();
     var group = new THREE.Group();
 
-    var sphereSize = 30;
     var degreesPrecision = 5;
     var figureIndex = 0;
 
@@ -65,39 +99,8 @@
       for (var j = 180; j < 360; j += degreesPrecision) { //horizontal
         figureIndex++;
 
-        var phiStart = degToRad(i);
-        var phiEnd = degToRad(i + degreesPrecision);
-        var thetaStart = degToRad(j);
-        var thetaEnd = degToRad(j + degreesPrecision);
-
         var color = (figureIndex % 2 == 0) ? 0x156289 : 0xFFFF50;
-        var material = new THREE.MeshBasicMaterial({ color: color, side: THREE.DoubleSide});
-
-        var vertices = [
-          new THREE.Vector3(),
-          new THREE.Vector3(),
-          new THREE.Vector3(),
-          new THREE.Vector3(),
-        ];
-
-        vertices[0].setFromSphericalCoords(sphereSize, phiStart, thetaStart);
-        vertices[1].setFromSphericalCoords(sphereSize, phiStart, thetaEnd);
-        vertices[2].setFromSphericalCoords(sphereSize, phiEnd, thetaStart);
-        vertices[3].setFromSphericalCoords(sphereSize, phiEnd, thetaEnd);
-
-        var triangle1 = new THREE.Geometry();
-        for (var z = 0; z < 3; z++) {
-          triangle1.vertices.push(vertices[z]);
-        }
-        triangle1.faces.push(new THREE.Face3(0, 1, 2));
-        group.add(new THREE.Mesh(triangle1, material));
-
-        var triangle2 = new THREE.Geometry();
-        for (var z = 1; z < 4; z++) {
-          triangle2.vertices.push(vertices[z]);
-        }
-        triangle2.faces.push(new THREE.Face3(0, 1, 2));
-        group.add(new THREE.Mesh(triangle2, material));
+        addSphericalSquareToGroup(group, color, 30, i, j, degreesPrecision);
       }
     }
 
