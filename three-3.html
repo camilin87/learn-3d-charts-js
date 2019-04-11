@@ -69,14 +69,6 @@
       group.add(new THREE.Mesh(triangle2, material));
     }
 
-    var colorData = {
-      '0;0': 0xff0000, // this should be the leftmost point at the center
-      '0;90': 0x00FF00, // this should be the topmost point at the center
-      '0;-90': 0xffff00, // this should be the bottommost point at the center
-      '90;0': 0xffffff, // this should to one side
-      '-90;0': 0x0000ff, // this should be to the other
-    };
-
     var renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
@@ -95,12 +87,27 @@
     var figureIndex = 0;
     var sphereSize = 30;
 
+    // azimuth is second coordinate
+    var colorData = {
+      '0;0': 0xff0000, // this should be the leftmost point at the center
+      '0;90': 0x00FF00, // this should be the topmost point at the center
+      '0;-85': 0xffff00, // this should be the bottommost point at the center, ([-90, -95], won't appear in the sphere)
+      '90;0': 0xffffff, // this should to one side
+      '-85;0': 0x0000ff, // this should be to the other, ([-90, -95] won't appear in the sphere)
+    };
+
     for (var i = 0; i < 180; i += degreesPrecision) { //vertical(azimut)(phi)
       figureIndex++;
       for (var j = 180; j < 360; j += degreesPrecision) { //horizontal (theta)
         figureIndex++;
 
         var color = (figureIndex % 2 == 0) ? 0x555577 : 0x888888;
+
+        var colorDataKey = (270 - j) + ";" + (90 - i);
+        if (colorData[colorDataKey]){
+          color = colorData[colorDataKey];
+        }
+
         addSphericalSquareToGroup(group, color, sphereSize, i, j, degreesPrecision);
       }
     }
