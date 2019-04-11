@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Learn TreeJs Multicolor Sphere</title>
+  <style>
+    body {
+      margin: 0;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%
+    }
+  </style>
+  <script src="js/three.js"></script>
+  <script src="js/WebGL.js"></script>
+  <script src="js/OrbitControls.js"></script>
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/103/three.min.js" integrity="sha256-T4lfPbatZLyNhpEgCvtmXmlhOUq0HZHkDX4cMlQWExA=" crossorigin="anonymous"></script> -->
+</head>
+
+<body>
+  <div id="container"></div>
+  <script type="text/javascript">
+  (function() {
+    // Compatibility check
+    if (!WEBGL.isWebGLAvailable()) {
+      var warning = WEBGL.getWebGLErrorMessage();
+      document.getElementById('container').appendChild(warning);
+      return;
+    }
+
+    var renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 500);
+    var controls = new THREE.OrbitControls(camera);
+    controls.enableZoom = false;
+
+    camera.position.set(0, 0, 100);
+    camera.lookAt(0, 0, 0);
+
+    controls.update();
+
+    var scene = new THREE.Scene();
+    var material = new THREE.LineBasicMaterial({ color: 0x00ff00 });
+
+    for (var i = 0; i <= 10; i += 1) { // theta
+      var geometry = new THREE.Geometry();
+
+      for (var j = 0; j <= 10; j += 1) { // phi
+        var pointSpherical = new THREE.Spherical(30, i, j);
+        var pointCartesian = new THREE.Vector3();
+        pointCartesian.setFromSpherical(pointSpherical);
+        geometry.vertices.push(pointCartesian);
+      }
+
+      // scene.add(new THREE.Line(geometry, material));
+    }
+
+    var geometry = new THREE.SphereBufferGeometry(30, 36, 18, 0, Math.PI * 2, 0, Math.PI / 2);
+    // var material = new THREE.MeshLambertMaterial({ color: 0xffff00 });
+    // var mesh = new THREE.Mesh(geometry, material);
+    // scene.add(mesh);
+
+    var group = new THREE.Group();
+
+    // var lineMaterial = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.5 });
+    var meshMaterial = new THREE.MeshPhongMaterial({ color: 0x156289, emissive: 0x072534, side: THREE.DoubleSide, flatShading: true });
+    // group.add(new THREE.LineSegments(geometry, lineMaterial));
+    group.add(new THREE.Mesh(geometry, meshMaterial));
+    scene.add(group);
+
+    // lightning
+    var lights = [
+      new THREE.PointLight(0xffffff, 1, 0),
+      new THREE.PointLight(0xffffff, 1, 0),
+      new THREE.PointLight(0xffffff, 1, 0)
+    ];
+    lights[0].position.set(0, 200, 0);
+    lights[1].position.set(100, 200, 100);
+    lights[2].position.set(-100, -200, -100);
+    lights.forEach(l => scene.add(l));
+
+    // Rendering
+    var animate = function() {
+      requestAnimationFrame(animate);
+      controls.update();
+
+      group.rotation.x += 0.005;
+      group.rotation.y += 0.005;
+
+      renderer.render(scene, camera);
+    };
+    window.addEventListener('resize', function() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }, false);
+    animate();
+  })();
+  </script>
+</body>
+
+</html>
