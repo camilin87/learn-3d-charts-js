@@ -34,6 +34,14 @@
       return x * Math.PI / 180.0;
     }
 
+    var colorData = [
+      { 0, 0, 0xff0000 }, // this should be the leftmost point at the center
+      { 0, 90, 0x00FF00 }, // this should be the topmost point at the center
+      { 0, -90, 0xFFFF00 }, // this should be the bottommost point at the center
+      { 90, 0, 0xffffff }, // this should to one side
+      { -90, 0, 0x333333 }, // this should be to the other
+    ];
+
     var renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
@@ -52,7 +60,7 @@
     var degreesPrecision = 5;
     var figureIndex = 0;
 
-    for (var i = 0; i < 180; i += degreesPrecision) { //vertical
+    for (var i = 0; i < 180; i += degreesPrecision) { //vertical(azimut)
       figureIndex++;
       for (var j = 180; j < 360; j += degreesPrecision) { //horizontal
         figureIndex++;
