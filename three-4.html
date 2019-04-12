@@ -95,6 +95,49 @@
       group.add(new THREE.ArrowHelper(dir, origin, lineSize, color, arrowLength));
     }
 
+    function addSphereToGroup(group, info) {
+      var sphereSize = info.sphereSize;
+      var degreesPrecision = info.degreesPrecision;
+      var phiStart = info.phiStart;
+      var phiEnd = info.phiEnd;
+      var thetaStart = info.thetaStart;
+      var thetaEnd = info.thetaEnd;
+      var drawAxis = info.drawAxis;
+      var drawCheckers = info.drawCheckers;
+
+      var markerPosition = sphereSize * 1.1;
+      var figureIndex = 0;
+
+      // draw the colored sphere
+      for (var phi = phiStart; phi < phiEnd; phi += degreesPrecision) { //vertical(azimut)(phi)
+        figureIndex++;
+        for (var theta = thetaStart; theta < thetaEnd; theta += degreesPrecision) { //horizontal (theta)
+          figureIndex++;
+
+          var color = 0x000000;
+          if (drawCheckers){
+            color = (figureIndex % 2 == 0) ? 0x555577 : 0x888888;
+          }
+
+          var colorDataKey = (270 - theta) + ";" + (90 - phi);
+          if (info.colorData[colorDataKey]) {
+            color = info.colorData[colorDataKey];
+          }
+
+          addSphericalSquareToGroup(group, color, sphereSize, phi, theta, degreesPrecision);
+        }
+      }
+
+      if (drawAxis){
+        addArrowFromTheOriginToGroup(group, 0xff0000, markerPosition, 0, 0); //x are red
+        addLineFromTheOriginToGroup(group, 0xff0000, -markerPosition, 0, 0); //x are red
+        addArrowFromTheOriginToGroup(group, 0x00ff00, 0, markerPosition, 0); //y are green
+        addLineFromTheOriginToGroup(group, 0x00ff00, 0, -markerPosition, 0); //y are green
+        addArrowFromTheOriginToGroup(group, 0x0000ff, 0, 0, markerPosition); //z are blue
+        addLineFromTheOriginToGroup(group, 0x0000ff, 0, 0, -markerPosition); //z are blue
+      }
+    }
+
     var renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
@@ -109,51 +152,26 @@
     var scene = new THREE.Scene();
     var group = new THREE.Group();
 
-    var degreesPrecision = 5;
-    var figureIndex = 0;
-    var sphereSize = 30;
-
-    // azimuth is second coordinate
-    var colorData = {
-      '0;0': 0xff0000, // this should be the leftmost point at the center
-      '0;90': 0x00FF00, // this should be the topmost point at the center
-      '0;-85': 0xffff00, // this should be the bottommost point at the center, ([-90, -95], won't appear in the sphere)
-      '90;0': 0xffffff, // this should to one side
-      '-85;0': 0x0000ff, // this should be to the other, ([-90, -95] won't appear in the sphere)
+    // this shall be read from a json api endpoint
+    var info = {
+      sphereSize: 30,
+      degreesPrecision: 5,
+      phiStart: 0,
+      phiEnd: 180,
+      thetaStart: 180,
+      thetaEnd: 360,
+      drawAxis: true,
+      drawCheckers: true,
+      colorData: { // azimuth(phi) is second coordinate
+        '0;0': 0xff0000, // this should be the leftmost point at the center
+        '0;90': 0x00FF00, // this should be the topmost point at the center
+        '0;-85': 0xffff00, // this should be the bottommost point at the center, ([-90, -95], won't appear in the sphere)
+        '90;0': 0xffffff, // this should to one side
+        '-85;0': 0x0000ff, // this should be to the other, ([-90, -95] won't appear in the sphere)
+      }
     };
 
-    for (var i = 0; i < 180; i += degreesPrecision) { //vertical(azimut)(phi)
-      figureIndex++;
-      for (var j = 180; j < 360; j += degreesPrecision) { //horizontal (theta)
-        figureIndex++;
-
-        var color = (figureIndex % 2 == 0) ? 0x555577 : 0x888888;
-
-        var colorDataKey = (270 - j) + ";" + (90 - i);
-        if (colorData[colorDataKey]) {
-          color = colorData[colorDataKey];
-        }
-
-        addSphericalSquareToGroup(group, color, sphereSize, i, j, degreesPrecision);
-      }
-    }
-
-    var markerPosition = sphereSize * 1.1;
-
-    // draw axis
-    addArrowFromTheOriginToGroup(group, 0xff0000, markerPosition, 0, 0); //x are red
-    addLineFromTheOriginToGroup(group, 0xff0000, -markerPosition, 0, 0); //x are red
-    addArrowFromTheOriginToGroup(group, 0x00ff00, 0, markerPosition, 0); //y are green
-    addLineFromTheOriginToGroup(group, 0x00ff00, 0, -markerPosition, 0); //y are green
-    addArrowFromTheOriginToGroup(group, 0x0000ff, 0, 0, markerPosition); //z are blue
-    addLineFromTheOriginToGroup(group, 0x0000ff, 0, 0, -markerPosition); //z are blue
-
-    // draw anchors points
-    addSphericalSquareToGroup(group, 0xff0000, markerPosition, 90, 270, 2); // this should be the leftmost point at the center
-    addSphericalSquareToGroup(group, 0x00FF00, markerPosition, 0, 270, 15); // this should be the topmost point at the center
-    addSphericalSquareToGroup(group, 0xffff00, markerPosition, 180, 270, 15); // this should be the bottommost point at the center
-    addSphericalSquareToGroup(group, 0xffffff, markerPosition, 90, 180, 2); // this should to one side
-    addSphericalSquareToGroup(group, 0x0000ff, markerPosition, 90, 0, 2); // this should be to the other
+    addSphereToGroup(group, info);
 
     scene.add(group);
 
