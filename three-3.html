@@ -69,7 +69,7 @@
       group.add(new THREE.Mesh(triangle2, material));
     }
 
-    function addLineFromTheOriginToGroup(group, color, xEnd, yEnd, zEnd){
+    function addLineFromTheOriginToGroup(group, color, xEnd, yEnd, zEnd) {
       var material = new THREE.LineBasicMaterial({
         color: color
       });
@@ -79,6 +79,20 @@
         new THREE.Vector3(xEnd, yEnd, zEnd)
       );
       group.add(new THREE.Line(geometry, material));
+    }
+
+    function addArrowFromTheOriginToGroup(group, color, xEnd, yEnd, zEnd) {
+      var material = new THREE.LineBasicMaterial({
+        color: color
+      });
+
+      var dir = new THREE.Vector3(xEnd, yEnd, zEnd);
+
+      var origin = new THREE.Vector3(0, 0, 0);
+      var lineSize = (xEnd + yEnd + zEnd);
+      var arrowLength = lineSize * 0.1;
+
+      group.add(new THREE.ArrowHelper(dir, origin, lineSize, color, arrowLength));
     }
 
     var renderer = new THREE.WebGLRenderer();
@@ -127,9 +141,12 @@
     var markerPosition = sphereSize * 1.1;
 
     // draw axis
-    addLineFromTheOriginToGroup(group, 0xff0000, markerPosition, 0, 0); //x are red
-    addLineFromTheOriginToGroup(group, 0x00ff00, 0, markerPosition, 0); //y are green
-    addLineFromTheOriginToGroup(group, 0x0000ff, 0, 0, markerPosition); //z are blue
+    addArrowFromTheOriginToGroup(group, 0xff0000, markerPosition, 0, 0); //x are red
+    addLineFromTheOriginToGroup(group, 0xff0000, -markerPosition, 0, 0); //x are red
+    addArrowFromTheOriginToGroup(group, 0x00ff00, 0, markerPosition, 0); //y are green
+    addLineFromTheOriginToGroup(group, 0x00ff00, 0, -markerPosition, 0); //y are green
+    addArrowFromTheOriginToGroup(group, 0x0000ff, 0, 0, markerPosition); //z are blue
+    addLineFromTheOriginToGroup(group, 0x0000ff, 0, 0, -markerPosition); //z are blue
 
     // draw anchors points
     addSphericalSquareToGroup(group, 0xff0000, markerPosition, 90, 270, 2); // this should be the leftmost point at the center
