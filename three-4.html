@@ -170,8 +170,8 @@
 
     // this shall be read from a json api endpoint
     var info = {
-      sphereSize: 30,
-      degreesPrecision: 5,
+      sphereSize: 35,
+      degreesPrecision: 2,
       phiStart: 0,
       phiEnd: 180,
       thetaStart: 180,
@@ -181,10 +181,33 @@
       drawCheckers: true,
       colorData: { // azimuth(phi) is second coordinate
         '270;90': 0xff5555,  // (pink) this should be the leftmost point at the center
+
+        '260;0': 0x00FF00,
+        '262;0': 0x00FF00,
+        '264;0': 0x00FF00,
+        '266;0': 0x00FF00,
+        '268;0': 0x00FF00,
         '270;0': 0x00FF00,   // (green) this should be the topmost point at the center
-        '270;175': 0xffff00, // (yellow) this should be the bottommost point at the center (180 will be out of the hemisphere, so we pick the smallest closest one)
+        '272;0': 0x00FF00,
+        '274;0': 0x00FF00,
+        '276;0': 0x00FF00,
+        '278;0': 0x00FF00,
+        '280;0': 0x00FF00,
+
+        '260;178': 0xffff00,
+        '262;178': 0xffff00,
+        '264;178': 0xffff00,
+        '266;178': 0xffff00,
+        '268;178': 0xffff00,
+        '270;178': 0xffff00, // (yellow) this should be the bottommost point at the center (180 will be out of the hemisphere, so we pick the smallest closest one)
+        '272;178': 0xffff00,
+        '274;178': 0xffff00,
+        '276;178': 0xffff00,
+        '278;178': 0xffff00,
+        '280;178': 0xffff00,
+
         '180;90': 0xffffff,  // (white) this should to one side
-        '355;90': 0x0000ff,  // (blue) this should be to the other (0 will be out of the hemisphere, so we pick the smallest closest one)
+        '358;90': 0x0000ff,  // (blue) this should be to the other (0 will be out of the hemisphere, so we pick the smallest closest one)
       }
     };
 
