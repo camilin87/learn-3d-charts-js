@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Learn TreeJs Multicolor Sphere Composed of squares. Coordinates translation happens on the server side</title>
+  <style>
+    body {
+      margin: 0;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%
+    }
+  </style>
+  <script src="js/three.js"></script>
+  <script src="js/WebGL.js"></script>
+  <script src="js/OrbitControls.js"></script>
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/103/three.min.js" integrity="sha256-T4lfPbatZLyNhpEgCvtmXmlhOUq0HZHkDX4cMlQWExA=" crossorigin="anonymous"></script> -->
+</head>
+
+<body>
+  <div id="container"></div>
+  <script type="text/javascript">
+  (function() {
+    // Compatibility check
+    if (!WEBGL.isWebGLAvailable()) {
+      var warning = WEBGL.getWebGLErrorMessage();
+      document.getElementById('container').appendChild(warning);
+      return;
+    }
+
+    function degToRad(x) {
+      return x * Math.PI / 180.0;
+    }
+
+    function addSphericalSquareToGroup(group, color, sphereSize, phi, theta, sizeInDegrees) {
+      var phiStart = degToRad(phi);
+      var phiEnd = degToRad(phi + sizeInDegrees);
+      var thetaStart = degToRad(theta);
+      var thetaEnd = degToRad(theta + sizeInDegrees);
+
+      var vertices = [
+        new THREE.Vector3(),
+        new THREE.Vector3(),
+        new THREE.Vector3(),
+        new THREE.Vector3(),
+      ];
+
+      vertices[0].setFromSphericalCoords(sphereSize, phiStart, thetaStart);
+      vertices[1].setFromSphericalCoords(sphereSize, phiStart, thetaEnd);
+      vertices[2].setFromSphericalCoords(sphereSize, phiEnd, thetaStart);
+      vertices[3].setFromSphericalCoords(sphereSize, phiEnd, thetaEnd);
+
+      var triangle1 = new THREE.Geometry();
+      for (var z = 0; z < 3; z++) {
+        triangle1.vertices.push(vertices[z]);
+      }
+      triangle1.faces.push(new THREE.Face3(0, 1, 2));
+
+      var triangle2 = new THREE.Geometry();
+      for (var z = 1; z < 4; z++) {
+        triangle2.vertices.push(vertices[z]);
+      }
+      triangle2.faces.push(new THREE.Face3(0, 1, 2));
+
+      var material = new THREE.MeshBasicMaterial({ color: color, side: THREE.DoubleSide });
+      group.add(new THREE.Mesh(triangle1, material));
+      group.add(new THREE.Mesh(triangle2, material));
+    }
+
+    function addLineFromTheOriginToGroup(group, color, xEnd, yEnd, zEnd) {
+      var material = new THREE.LineBasicMaterial({
+        color: color
+      });
+      var geometry = new THREE.Geometry();
+      geometry.vertices.push(
+        new THREE.Vector3(0, 0, 0),
+        new THREE.Vector3(xEnd, yEnd, zEnd)
+      );
+      group.add(new THREE.Line(geometry, material));
+    }
+
+    function addArrowFromTheOriginToGroup(group, color, xEnd, yEnd, zEnd) {
+      var material = new THREE.LineBasicMaterial({
+        color: color
+      });
+
+      var dir = new THREE.Vector3(xEnd, yEnd, zEnd);
+
+      var origin = new THREE.Vector3(0, 0, 0);
+      var lineSize = (xEnd + yEnd + zEnd);
+      var arrowLength = lineSize * 0.1;
+
+      group.add(new THREE.ArrowHelper(dir, origin, lineSize, color, arrowLength));
+    }
+
+    var renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 500);
+    var controls = new THREE.OrbitControls(camera);
+    controls.enableZoom = false;
+    camera.position.set(0, 0, 100);
+    camera.lookAt(0, 0, 0);
+    controls.update();
+
+    var scene = new THREE.Scene();
+    var group = new THREE.Group();
+
+    var degreesPrecision = 5;
+    var figureIndex = 0;
+    var sphereSize = 30;
+
+    // azimuth is second coordinate
+    var colorData = {
+      '0;0': 0xff0000, // this should be the leftmost point at the center
+      '0;90': 0x00FF00, // this should be the topmost point at the center
+      '0;-85': 0xffff00, // this should be the bottommost point at the center, ([-90, -95], won't appear in the sphere)
+      '90;0': 0xffffff, // this should to one side
+      '-85;0': 0x0000ff, // this should be to the other, ([-90, -95] won't appear in the sphere)
+    };
+
+    for (var i = 0; i < 180; i += degreesPrecision) { //vertical(azimut)(phi)
+      figureIndex++;
+      for (var j = 180; j < 360; j += degreesPrecision) { //horizontal (theta)
+        figureIndex++;
+
+        var color = (figureIndex % 2 == 0) ? 0x555577 : 0x888888;
+
+        var colorDataKey = (270 - j) + ";" + (90 - i);
+        if (colorData[colorDataKey]) {
+          color = colorData[colorDataKey];
+        }
+
+        addSphericalSquareToGroup(group, color, sphereSize, i, j, degreesPrecision);
+      }
+    }
+
+    var markerPosition = sphereSize * 1.1;
+
+    // draw axis
+    addArrowFromTheOriginToGroup(group, 0xff0000, markerPosition, 0, 0); //x are red
+    addLineFromTheOriginToGroup(group, 0xff0000, -markerPosition, 0, 0); //x are red
+    addArrowFromTheOriginToGroup(group, 0x00ff00, 0, markerPosition, 0); //y are green
+    addLineFromTheOriginToGroup(group, 0x00ff00, 0, -markerPosition, 0); //y are green
+    addArrowFromTheOriginToGroup(group, 0x0000ff, 0, 0, markerPosition); //z are blue
+    addLineFromTheOriginToGroup(group, 0x0000ff, 0, 0, -markerPosition); //z are blue
+
+    // draw anchors points
+    addSphericalSquareToGroup(group, 0xff0000, markerPosition, 90, 270, 2); // this should be the leftmost point at the center
+    addSphericalSquareToGroup(group, 0x00FF00, markerPosition, 0, 270, 15); // this should be the topmost point at the center
+    addSphericalSquareToGroup(group, 0xffff00, markerPosition, 180, 270, 15); // this should be the bottommost point at the center
+    addSphericalSquareToGroup(group, 0xffffff, markerPosition, 90, 180, 2); // this should to one side
+    addSphericalSquareToGroup(group, 0x0000ff, markerPosition, 90, 0, 2); // this should be to the other
+
+    scene.add(group);
+
+    // lightning
+    var lights = [
+      new THREE.PointLight(0xffffff, 1, 0),
+      new THREE.PointLight(0xffffff, 1, 0),
+      new THREE.PointLight(0xffffff, 1, 0)
+    ];
+    lights[0].position.set(0, 200, 0);
+    lights[1].position.set(100, 200, 100);
+    lights[2].position.set(-100, -200, -100);
+    lights.forEach(l => scene.add(l));
+
+    // Rendering
+    var animate = function() {
+      requestAnimationFrame(animate);
+      controls.update();
+
+      // group.rotation.x += 0.005;
+      // group.rotation.y += 0.005;
+
+      renderer.render(scene, camera);
+    };
+    window.addEventListener('resize', function() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }, false);
+    animate();
+  })();
+  </script>
+</body>
+
+</html>
