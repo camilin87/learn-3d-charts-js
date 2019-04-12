@@ -114,22 +114,25 @@
         for (var theta = thetaStart; theta < thetaEnd; theta += degreesPrecision) { //horizontal (theta)
           figureIndex++;
 
-          var color = 0x000000;
-          if (drawCheckers){
-            color = (figureIndex % 2 == 0) ? 0x555577 : 0x888888;
-          }
+          var color = null;
 
           var colorDataKey = theta + ";" + phi;
           if (info.colorData[colorDataKey]) {
             color = info.colorData[colorDataKey];
           }
 
-          addSphericalSquareToGroup(group, color, sphereSize, phi, theta, degreesPrecision);
+          if (!color && drawCheckers){
+            color = (figureIndex % 2 == 0) ? 0x555577 : 0x888888;
+          }
+
+          if (color){
+            addSphericalSquareToGroup(group, color, sphereSize, phi, theta, degreesPrecision);
+          }
         }
       }
 
       if (drawAxis){
-        var axisLength = sphereSize * 1.1;
+        var axisLength = sphereSize * 1.2;
         addArrowFromTheOriginToGroup(group, 0xff0000, axisLength, 0, 0); //x are red
         addLineFromTheOriginToGroup(group, 0xff0000, -axisLength, 0, 0); //x are red
         addArrowFromTheOriginToGroup(group, 0x00ff00, 0, axisLength, 0); //y are green
@@ -139,7 +142,7 @@
       }
 
       if (drawMarkers){
-        var markerPosition = sphereSize * 1.2;
+        var markerPosition = sphereSize * 1.3;
         var smallMarker = degreesPrecision * 0.2;
         var largeMarker = degreesPrecision * 2;
         addSphericalSquareToGroup(group, 0xff0000, markerPosition, 90, 90, smallMarker);   // (red) this should be the rightmost point at the center
