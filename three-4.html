@@ -103,9 +103,9 @@
       var thetaStart = info.thetaStart;
       var thetaEnd = info.thetaEnd;
       var drawAxis = info.drawAxis;
+      var drawMarkers = info.drawMarkers;
       var drawCheckers = info.drawCheckers;
 
-      var markerPosition = sphereSize * 1.1;
       var figureIndex = 0;
 
       // draw the colored sphere
@@ -129,12 +129,25 @@
       }
 
       if (drawAxis){
-        addArrowFromTheOriginToGroup(group, 0xff0000, markerPosition, 0, 0); //x are red
-        addLineFromTheOriginToGroup(group, 0xff0000, -markerPosition, 0, 0); //x are red
-        addArrowFromTheOriginToGroup(group, 0x00ff00, 0, markerPosition, 0); //y are green
-        addLineFromTheOriginToGroup(group, 0x00ff00, 0, -markerPosition, 0); //y are green
-        addArrowFromTheOriginToGroup(group, 0x0000ff, 0, 0, markerPosition); //z are blue
-        addLineFromTheOriginToGroup(group, 0x0000ff, 0, 0, -markerPosition); //z are blue
+        var axisLength = sphereSize * 1.1;
+        addArrowFromTheOriginToGroup(group, 0xff0000, axisLength, 0, 0); //x are red
+        addLineFromTheOriginToGroup(group, 0xff0000, -axisLength, 0, 0); //x are red
+        addArrowFromTheOriginToGroup(group, 0x00ff00, 0, axisLength, 0); //y are green
+        addLineFromTheOriginToGroup(group, 0x00ff00, 0, -axisLength, 0); //y are green
+        addArrowFromTheOriginToGroup(group, 0x0000ff, 0, 0, axisLength); //z are blue
+        addLineFromTheOriginToGroup(group, 0x0000ff, 0, 0, -axisLength); //z are blue
+      }
+
+      if (drawMarkers){
+        var markerPosition = sphereSize * 1.2;
+        var smallMarker = degreesPrecision * 0.2;
+        var largeMarker = degreesPrecision * 2;
+        addSphericalSquareToGroup(group, 0xff0000, markerPosition, 90, 90, smallMarker);   // (red) this should be the rightmost point at the center
+        addSphericalSquareToGroup(group, 0xff5555, markerPosition, 90, 270, smallMarker);  // (pink) this should be the leftmost point at the center
+        addSphericalSquareToGroup(group, 0x00FF00, markerPosition, 0, 270, largeMarker);   // (green) this should be the topmost point at the center
+        addSphericalSquareToGroup(group, 0xffff00, markerPosition, 180, 270, largeMarker); // (yellow) this should be the bottommost point at the center
+        addSphericalSquareToGroup(group, 0xffffff, markerPosition, 90, 180, smallMarker);  // (white) this should to one side, the negative z
+        addSphericalSquareToGroup(group, 0x0000ff, markerPosition, 90, 0, smallMarker);    // (blue) this should be to the other, the positive z
       }
     }
 
@@ -161,9 +174,10 @@
       thetaStart: 180,
       thetaEnd: 360,
       drawAxis: true,
+      drawMarkers: true,
       drawCheckers: true,
       colorData: { // azimuth(phi) is second coordinate
-        '270;90': 0xff0000,  // (red) this should be the leftmost point at the center
+        '270;90': 0xff5555,  // (pink) this should be the leftmost point at the center
         '270;0': 0x00FF00,   // (green) this should be the topmost point at the center
         '270;175': 0xffff00, // (yellow) this should be the bottommost point at the center (180 will be out of the hemisphere, so we pick the smallest closest one)
         '180;90': 0xffffff,  // (white) this should to one side
